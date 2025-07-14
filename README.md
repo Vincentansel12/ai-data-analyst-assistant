@@ -1,4 +1,4 @@
-# 🤖 AI Data Analyst Assistant
+#  AI Data Analyst Assistant
 
 An AI-powered assistant to analyze structured business data using GPT-4.
 
@@ -6,13 +6,13 @@ This project leverages the OpenAI API to help analysts summarize, explore, and e
 
 ---
 
-## 🌟 Features
+##  Features
 
-- 🔍 Natural language–based data exploration  
-- 📊 Visualizations with `matplotlib` and `seaborn`  
-- 🧠 GPT-4 integration via OpenAI API  
-- 📂 CSV data input support  
-- 💬 Example queries like:  
+-  Natural language–based data exploration  
+-  Visualizations with `matplotlib` and `seaborn`  
+-  GPT-4 integration via OpenAI API  
+-  CSV data input support  
+-  Example queries like:  
   - “Summarize sales by region”  
   - “Find top 5 products by revenue”  
   - “Plot monthly trends”  
