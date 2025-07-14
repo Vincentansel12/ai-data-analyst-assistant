@@ -9,12 +9,13 @@ from openai import OpenAI
 st.set_page_config(page_title="AI Data Analyst Assistant", layout="wide")
 st.title("🧠 AI Data Analyst Assistant")
 
-client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+client = OpenAI(api_key=st.secrets["openai"]["api_key"])
 
 # =============================
 # FILE UPLOAD
 # =============================
 uploaded_file = st.file_uploader("Upload your CSV file", type=["csv"])
+
 if uploaded_file:
     df = pd.read_csv(uploaded_file)
 
@@ -30,7 +31,9 @@ if uploaded_file:
         else:
             st.warning("⚠️ 'Unnamed: 0' detected but not a proper index. Kept as-is.")
 
-    # Preview
+    # =============================
+    # PREVIEW
+    # =============================
     st.subheader("👀 Preview of Your Data")
     st.dataframe(df.head(10), use_container_width=True)
     st.code(f"Columns loaded: {df.columns.tolist()}")
@@ -55,7 +58,7 @@ if uploaded_file:
         st.markdown(f"**🔹 {dtype} ({len(cols)} columns):** `{', '.join(cols)}`")
 
     # =============================
-    # SUMMARY
+    # AI SUMMARY
     # =============================
     st.subheader("🤖 AI-Powered Insight Summary")
     if st.button("🔍 Generate Summary"):
@@ -73,7 +76,7 @@ if uploaded_file:
             st.markdown(summary)
 
     # =============================
-    # ASK ANYTHING
+    # ASK GPT ANYTHING
     # =============================
     st.subheader("💬 Ask Anything About Your Data")
     user_question = st.text_input("Enter your question (e.g., Which product is most profitable?)")
@@ -92,7 +95,7 @@ if uploaded_file:
             st.markdown(answer)
 
     # =============================
-    # AUTO CHART GENERATOR
+    # AUTO CHART
     # =============================
     st.subheader("📈 Auto Chart Generator")
     x_col = st.selectbox("Select X-axis", df.columns, key="x")
@@ -105,9 +108,7 @@ if uploaded_file:
         else:
             chart_df = df[[x_col, y_col]].dropna()
 
-            # Handle non-unique values
             if not chart_df[y_col].is_unique:
-                # Optional: group and average if X col is not unique too
                 try:
                     chart_df = chart_df.groupby(x_col, as_index=False).mean(numeric_only=True)
                 except Exception as e:
@@ -125,3 +126,4 @@ if uploaded_file:
                 st.pyplot(fig)
             except Exception as e:
                 st.error(f"❌ Chart failed to render: {e}")
+
