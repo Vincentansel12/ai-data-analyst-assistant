@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
-from openai import OpenAI
+import openai
 
 # =============================
 # CONFIG
@@ -9,6 +9,7 @@ from openai import OpenAI
 st.set_page_config(page_title="AI Data Analyst Assistant", layout="wide")
 st.title("🧠 AI Data Analyst Assistant")
 
+# API Key from secrets
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 
 # =============================
