@@ -11,7 +11,8 @@ This project leverages the OpenAI API to help analysts summarize, explore, and e
 -  Natural language–based data exploration  
 -  Visualizations with `matplotlib` and `seaborn`  
 -  GPT-4 integration via OpenAI API  
--  CSV data input support  
+-  CSV data input support
+-  Token-efficient: only analyzes 10 random rows to control API cost 
 -  Example queries like:  
   - “Summarize sales by region”  
   - “Find top 5 products by revenue”  
