@@ -1,7 +1,8 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
-import openai
+import os
+from openai import OpenAI
 
 # =============================
 # CONFIG
@@ -9,8 +10,9 @@ import openai
 st.set_page_config(page_title="AI Data Analyst Assistant", layout="wide")
 st.title("🧠 AI Data Analyst Assistant")
 
-# API Key from secrets
-openai.api_key = st.secrets["OPENAI_API_KEY"]
+# API Key from Streamlit secrets
+os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
+client = OpenAI()
 
 # =============================
 # FILE UPLOAD
@@ -20,12 +22,12 @@ uploaded_file = st.file_uploader("Upload your CSV file", type=["csv"])
 if uploaded_file:
     df = pd.read_csv(uploaded_file)
 
-    # ✅ Fix duplicate columns
+    # Fix duplicate columns
     if df.columns.duplicated().any():
         df.columns = pd.io.parsers.ParserBase({'names': df.columns})._maybe_dedup_names(df.columns)
         st.warning("⚠️ Duplicate column names found. Renamed automatically.")
 
-    # ✅ Rename Unnamed: 0 if it's likely an index
+    # Rename Unnamed: 0 if it's likely an index
     if 'Unnamed: 0' in df.columns:
         if df['Unnamed: 0'].is_unique and df['Unnamed: 0'].is_monotonic_increasing:
             df.rename(columns={'Unnamed: 0': 'index'}, inplace=True)
@@ -65,16 +67,19 @@ if uploaded_file:
     if st.button("🔍 Generate Summary"):
         sample_df = df.sample(min(10, len(df)), random_state=1).to_csv(index=False)
         with st.spinner("Asking GPT..."):
-            response = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo",
-                messages=[
-                    {"role": "system", "content": "You are a helpful data analyst."},
-                    {"role": "user", "content": f"Here's the data sample:\n\n{sample_df}\n\nPlease summarize the dataset in 3 bullet points."}
-                ]
-            )
-            summary = response.choices[0].message.content
-            st.success("✅ Summary generated!")
-            st.markdown(summary)
+            try:
+                response = client.chat.completions.create(
+                    model="gpt-3.5-turbo",
+                    messages=[
+                        {"role": "system", "content": "You are a helpful data analyst."},
+                        {"role": "user", "content": f"Here's the data sample:\n\n{sample_df}\n\nPlease summarize the dataset in 3 bullet points."}
+                    ]
+                )
+                summary = response.choices[0].message.content
+                st.success("✅ Summary generated!")
+                st.markdown(summary)
+            except Exception as e:
+                st.error(f"❌ Error generating summary: {e}")
 
     # =============================
     # ASK GPT ANYTHING
@@ -84,16 +89,19 @@ if uploaded_file:
     if st.button("📊 Ask Now") and user_question:
         sample_df = df.sample(min(10, len(df)), random_state=2).to_csv(index=False)
         with st.spinner("Generating answer..."):
-            response = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo",
-                messages=[
-                    {"role": "system", "content": "You are a data analyst assistant."},
-                    {"role": "user", "content": f"Dataset sample:\n\n{sample_df}\n\nQuestion: {user_question}"}
-                ]
-            )
-            answer = response.choices[0].message.content
-            st.success("✅ Answer generated!")
-            st.markdown(answer)
+            try:
+                response = client.chat.completions.create(
+                    model="gpt-3.5-turbo",
+                    messages=[
+                        {"role": "system", "content": "You are a data analyst assistant."},
+                        {"role": "user", "content": f"Dataset sample:\n\n{sample_df}\n\nQuestion: {user_question}"}
+                    ]
+                )
+                answer = response.choices[0].message.content
+                st.success("✅ Answer generated!")
+                st.markdown(answer)
+            except Exception as e:
+                st.error(f"❌ Error generating answer: {e}")
 
     # =============================
     # AUTO CHART
