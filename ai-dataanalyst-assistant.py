@@ -63,9 +63,9 @@ if uploaded_file:
     # =============================
     st.subheader("🤖 AI-Powered Insight Summary")
     if st.button("🔍 Generate Summary"):
-        sample_df = df.sample(10, random_state=1).to_csv(index=False)
+        sample_df = df.sample(min(10, len(df)), random_state=1).to_csv(index=False)
         with st.spinner("Asking GPT..."):
-            response = client.chat.completions.create(
+            response = openai.ChatCompletion.create(
                 model="gpt-3.5-turbo",
                 messages=[
                     {"role": "system", "content": "You are a helpful data analyst."},
@@ -82,9 +82,9 @@ if uploaded_file:
     st.subheader("💬 Ask Anything About Your Data")
     user_question = st.text_input("Enter your question (e.g., Which product is most profitable?)")
     if st.button("📊 Ask Now") and user_question:
-        sample_df = df.sample(10, random_state=2).to_csv(index=False)
+        sample_df = df.sample(min(10, len(df)), random_state=2).to_csv(index=False)
         with st.spinner("Generating answer..."):
-            response = client.chat.completions.create(
+            response = openai.ChatCompletion.create(
                 model="gpt-3.5-turbo",
                 messages=[
                     {"role": "system", "content": "You are a data analyst assistant."},
@@ -127,4 +127,3 @@ if uploaded_file:
                 st.pyplot(fig)
             except Exception as e:
                 st.error(f"❌ Chart failed to render: {e}")
-
