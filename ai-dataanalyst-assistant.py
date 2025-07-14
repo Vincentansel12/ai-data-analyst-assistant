@@ -9,7 +9,7 @@ from openai import OpenAI
 st.set_page_config(page_title="AI Data Analyst Assistant", layout="wide")
 st.title("🧠 AI Data Analyst Assistant")
 
-client = OpenAI(api_key=st.secrets["openai"]["api_key"])
+client = OpenAI(api_key=st.secrets["api_key"])
 
 # =============================
 # FILE UPLOAD
