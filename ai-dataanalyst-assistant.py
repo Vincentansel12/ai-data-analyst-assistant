@@ -69,7 +69,7 @@ if uploaded_file:
         with st.spinner("Asking GPT..."):
             try:
                 response = client.chat.completions.create(
-                    model="gpt-3.5-turbo",
+                    model="gpt-4",
                     messages=[
                         {"role": "system", "content": "You are a helpful data analyst."},
                         {"role": "user", "content": f"Here's the data sample:\n\n{sample_df}\n\nPlease summarize the dataset in 3 bullet points."}
